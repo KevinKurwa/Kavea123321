@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kavea Tweaks - Free Tweaker</title>
+    <!-- Fixed favicon implementation -->
+    <link rel="icon" type="image/x-icon" href="kavea.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #a24ae2;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #a24ae2, #8a3ac8);
+            transition: width 0.3s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar - 25% smaller */
+        .announcement-bar {
+            background-color: #8a3ac8; /* 20% darker than #a24ae2 */
+            color: white;
+            text-align: center;
+            padding: 7.5px 0; /* Reduced from 10px to 7.5px (25% smaller) */
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 101;
+            transition: all 0.4s ease;
+            font-size: 14px; /* Slightly smaller font */
+        }
+
+            .announcement-bar.hidden {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+        /* Header Styles */
+        header {
+            background-color: #000;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 22.5px; /* Adjusted for smaller announcement bar (30px * 0.75 = 22.5px) */
+            width: 100%;
+            z-index: 100;
+            transition: all 0.3s ease-in; /* Faster when hiding (going down) */
+        }
+
+            header.hidden {
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: all 0.9s ease-out; /* 50% slower when showing (coming up) - was 0.6s, now 0.9s */
+            }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .logo span {
+                color: #a24ae2;
+            }
+
+        .logo-img {
+            height: 36px; /* Reduced from 40px to 36px (10% smaller) */
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+            nav ul li {
+                margin-left: 30px;
+            }
+
+                nav ul li a {
+                    color: #fff;
+                    text-decoration: none;
+                    font-weight: 500;
+                    transition: color 0.3s;
+                }
+
+                    nav ul li a:hover {
+                        color: #a24ae2;
+                    }
+
+        /* Page Content */
+        .page-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 142.5px; /* Adjusted for smaller announcement bar and header (150px * 0.95 = 142.5px) */
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+            .hero h1 {
+                font-size: 48px;
+                margin-bottom: 20px;
+                color: #fff;
+            }
+
+            .hero p {
+                font-size: 20px;
+                max-width: 700px;
+                margin: 0 auto 30px;
+                color: #ccc;
+            }
+
+        .btn {
+            display: inline-block;
+            background-color: #a24ae2;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #8a3ac8;
+            }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #a24ae2;
+        }
+
+            .btn-outline:hover {
+                background-color: #a24ae2;
+            }
+
+        /* Premium Button */
+        .btn-premium {
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .btn-premium:hover {
+                background: linear-gradient(135deg, #8a3ac8, #8a1b7a);
+            }
+
+        /* Discord Button */
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #a24ae2;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+            .discord-btn:hover {
+                background-color: #8a3ac8;
+            }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .features-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+            .feature-card:hover {
+                border-color: #a24ae2;
+            }
+
+        .feature-icon {
+            font-size: 40px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #a24ae2;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .team-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-members {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .team-member {
+            text-align: center;
+            max-width: 350px;
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+            .team-member:hover {
+                border-color: #a24ae2;
+            }
+
+        .member-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border: 3px solid #a24ae2;
+        }
+
+            .member-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .member-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .member-role {
+            color: #a24ae2;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .member-bio {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .discord-handle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+            .discord-handle:hover {
+                background-color: #a24ae2;
+            }
+
+        /* Premium Section */
+        .premium {
+            padding: 80px 0;
+        }
+
+        .premium-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+            .premium-content h2 {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+
+            .premium-content p {
+                font-size: 18px;
+                margin-bottom: 30px;
+                color: #ccc;
+            }
+
+        .premium-features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .premium-feature {
+            flex: 1;
+            min-width: 250px;
+            margin: 20px;
+            padding: 20px;
+        }
+
+            .premium-feature i {
+                font-size: 40px;
+                color: #a24ae2;
+                margin-bottom: 15px;
+            }
+
+            .premium-feature h3 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .premium-feature p {
+                color: #aaa;
+            }
+
+        /* Premium Page Styles */
+        .premium-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+            .premium-hero h1 {
+                font-size: 48px;
+                margin-bottom: 20px;
+                background: linear-gradient(135deg, #a24ae2, #a22b8a);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .premium-hero p {
+                font-size: 20px;
+                max-width: 700px;
+                margin: 0 auto 30px;
+                color: #ccc;
+            }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background-color: #000;
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+            .pricing-card.featured {
+                border: 2px solid #a24ae2;
+                transform: scale(1.05);
+            }
+
+                .pricing-card.featured::before {
+                    content: "Most Popular";
+                    position: absolute;
+                    top: -12px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #a24ae2, #a22b8a);
+                    color: white;
+                    padding: 5px 15px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
+            .pricing-card:hover {
+                border-color: #a24ae2;
+            }
+
+            .pricing-card h3 {
+                font-size: 24px;
+                margin-bottom: 15px;
+                color: #fff;
+            }
+
+        .price {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+            .price span {
+                font-size: 18px;
+                color: #ccc;
+                display: block;
+                margin-top: 5px;
+            }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+            .pricing-features li {
+                margin-bottom: 10px;
+                color: #ccc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+                .pricing-features li i {
+                    color: #a24ae2;
+                }
+
+        /* Donation Section */
+        .donation {
+            padding: 80px 0;
+            text-align: center;
+            background-color: #111;
+        }
+
+        .donation-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .donation h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .donation p {
+            color: #ccc;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .crypto-address {
+            background-color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+            .crypto-address p {
+                margin-bottom: 10px;
+                color: #aaa;
+            }
+
+        .address-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+
+        .address-text {
+            font-family: monospace;
+            font-size: 16px;
+            color: #a24ae2;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+            .copy-btn:hover {
+                background-color: #a24ae2;
+            }
+
+        /* Enhanced Copy Notification with Animation */
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #a24ae2;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+            .copy-notification.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .copy-notification i {
+                font-size: 20px;
+                animation: bounce 0.5s ease-in-out;
+            }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-5px);
+            }
+
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Discord Page Styles */
+        .discord-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+            .discord-hero h1 {
+                font-size: 48px;
+                margin-bottom: 20px;
+                color: #fff;
+            }
+
+            .discord-hero p {
+                font-size: 20px;
+                max-width: 700px;
+                margin: 0 auto 30px;
+                color: #ccc;
+            }
+
+        .discord-info {
+            padding: 80px 0;
+            background-color: #111;
+            text-align: center;
+        }
+
+            .discord-info h2 {
+                font-size: 36px;
+                margin-bottom: 20px;
+                color: #a24ae2;
+            }
+
+            .discord-info p {
+                font-size: 20px;
+                max-width: 600px;
+                margin: 0 auto;
+                color: #ccc;
+                line-height: 1.6;
+            }
+
+        /* Support Page Styles */
+        .support-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .support-section {
+            margin-bottom: 60px;
+        }
+
+            .support-section h2 {
+                font-size: 32px;
+                margin-bottom: 20px;
+                color: #a24ae2;
+            }
+
+            .support-section p {
+                color: #ccc;
+                margin-bottom: 20px;
+                font-size: 18px;
+            }
+
+        .faq-item {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .faq-question {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .faq-answer {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Downloads Page Styles */
+        .downloads-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .download-card {
+            background-color: #111;
+            border-radius: 10px;
+            padding: 40px;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+            margin-top: 40px;
+        }
+
+            .download-card:hover {
+                border-color: #a24ae2;
+            }
+
+            .download-card h3 {
+                font-size: 28px;
+                margin-bottom: 15px;
+                color: #fff;
+            }
+
+            .download-card p {
+                color: #aaa;
+                margin-bottom: 25px;
+                font-size: 18px;
+            }
+
+        .version-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            font-size: 16px;
+            color: #888;
+        }
+
+        /* Key Information Section */
+        .key-info {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+            .key-info h4 {
+                font-size: 20px;
+                margin-bottom: 15px;
+                color: #a24ae2;
+            }
+
+            .key-info p {
+                color: #ccc;
+                margin-bottom: 15px;
+                font-size: 16px;
+            }
+
+        .key-box {
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            margin-top: 10px;
+            font-family: monospace;
+            color: #a24ae2;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 0 20px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+            .footer-column h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+                color: #fff;
+            }
+
+            .footer-column ul {
+                list-style: none;
+            }
+
+                .footer-column ul li {
+                    margin-bottom: 10px;
+                }
+
+                    .footer-column ul li a {
+                        color: #aaa;
+                        text-decoration: none;
+                        transition: color 0.3s;
+                    }
+
+                        .footer-column ul li a:hover {
+                            color: #a24ae2;
+                        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+            .social-links a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background-color: #333;
+                border-radius: 50%;
+                color: #fff;
+                text-decoration: none;
+                transition: background-color 0.3s;
+            }
+
+                .social-links a:hover {
+                    background-color: #a24ae2;
+                }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+        }
+
+        /* Page Navigation */
+        .page {
+            display: none;
+        }
+
+            .page.active {
+                display: block;
+            }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+                nav ul li {
+                    margin: 5px 10px;
+                }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .discord-hero h1 {
+                font-size: 36px;
+            }
+
+            .premium-hero h1 {
+                font-size: 36px;
+            }
+
+            .premium-features {
+                flex-direction: column;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .address-box {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .copy-btn {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .team-members {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <img src="kavea.png" alt="Kavea Tweaks Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+        </div>
+        <div class="loading-text">Loading Kavea Tweaks...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <!-- Announcement Bar - 25% smaller -->
+    <div class="announcement-bar" id="announcement">
+        Premium Tweaker almost Done :)
+    </div>
+
+    <!-- Header -->
+    <header id="navbar">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" onclick="showPage('home')">
+                    <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
+                    Kavea <span>Tweaks</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
+                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
+                        <li><a href="#" onclick="showPage('support')">Support</a></li>
+                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <div class="page-content">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1>The Solution to Your PC</h1>
+                    <p>Experience unparalleled performance and optimization with Kavea Tweaks. Completely free, regularly updated, and trusted by thousands of users worldwide.</p>
+                    <a href="#" onclick="showPage('downloads')" class="btn">Download Kavea Tweaks</a>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features">
+                <div class="container">
+                    <div class="features-container">
+                        <h2 class="section-title">Why Choose Kavea Tweaks?</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <h3>Lightning Fast Performance</h3>
+                                <p>Optimize your system for maximum speed and responsiveness with our advanced performance algorithms.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3>Enhanced Security</h3>
+                                <p>Built-in security features protect your system while maintaining optimal performance levels.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-battery-full"></i>
+                                </div>
+                                <h3>Battery Optimization</h3>
+                                <p>Extend your device's battery life with intelligent power management features.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats">
+                <div class="container">
+                    <h2 class="section-title">Trusted By Thousands</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">2k+</div>
+                            <div class="stat-label">Downloads</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1k+</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support Available</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">99%</div>
+                            <div class="stat-label">Satisfaction Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Section -->
+            <section class="team">
+                <div class="container">
+                    <h2 class="section-title">Meet Our Team</h2>
+                    <div class="team-members">
+                        <div class="team-member">
+                            <div class="member-avatar">
+                                <!-- Profile picture -->
+                                <img src="profile.png" alt="Developer Profile Picture" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+                            </div>
+                            <div class="member-info">
+                                <h2>the.allium</h2>
+                                <div class="member-role">Founder & Lead Developer</div>
+                                <p class="member-bio">Passionate about creating high-performance software solutions. With 5+ years of experience in system optimization.</p>
+                                <a href="https://discord.com/invite/FxenQbsuAM" class="discord-handle" target="_blank">
+                                    <i class="fab fa-discord"></i> the.allium
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="team-member">
+                            <div class="member-avatar">
+                                <!-- Profile picture -->
+                                <img src="maka.png" alt="MakaKnacker Profile Picture" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>M</div>';">
+                            </div>
+                            <div class="member-info">
+                                <h2>MakaKnacker</h2>
+                                <div class="member-role">Community Manager & Support</div>
+                                <p class="member-bio">Dedicated to helping users get the most out of our software. Always available to answer your questions.</p>
+                                <a href="https://discord.com/invite/FxenQbsuAM" class="discord-handle" target="_blank">
+                                    <i class="fab fa-discord"></i> matti_main_plug
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Premium Section -->
+            <section class="premium">
+                <div class="container">
+                    <div class="premium-content">
+                        <h2>Premium Features Coming Soon</h2>
+                        <p>We're working on exclusive premium tweaks that will take your experience to the next level. Stay tuned for advanced features, priority support, and regular updates.</p>
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">Notify Me When Available</a>
+
+                        <div class="premium-features">
+                            <div class="premium-feature">
+                                <i class="fas fa-bolt"></i>
+                                <h3>Advanced Optimization</h3>
+                                <p>Deep system optimization with custom algorithms for peak performance.</p>
+                            </div>
+                            <div class="premium-feature">
+                                <i class="fas fa-tools"></i>
+                                <h3>Exclusive Tools</h3>
+                                <p>Access to premium-only tools and utilities not available in free versions.</p>
+                            </div>
+                            <div class="premium-feature">
+                                <i class="fas fa-headset"></i>
+                                <h3>Priority Support</h3>
+                                <p>Get your questions answered quickly with our dedicated support team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Donation Section -->
+            <section class="donation">
+                <div class="container">
+                    <div class="donation-container">
+                        <h2>Support Our Work</h2>
+                        <p>If you enjoy using Kavea Tweaks and want to support future development, consider making a donation. Your contribution helps us continue providing free tweaks and developing new features.</p>
+
+                        <div class="crypto-address">
+                            <p>Send Litecoin (LTC) to:</p>
+                            <div class="address-box">
+                                <span class="address-text" id="ltc-address">LgMrnCNb1aWcUiCVckEWUKEQpmwsvjFxfU</span>
+                                <button class="copy-btn" id="copy-ltc">
+                                    <i class="far fa-copy"></i> Copy Address
+                                </button>
+                            </div>
+                        </div>
+
+                        <p>Thank you for your support! It means a lot to us.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Premium Page -->
+    <div id="premium" class="page">
+        <div class="page-content">
+            <!-- Premium Hero Section -->
+            <section class="premium-hero">
+                <div class="container">
+                    <h1>Premium Kavea Tweaks</h1>
+                    <p>Wanna buy our Premium tweakers? Purchase on our Discord</p>
+                    <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn-premium">Purchase on Discord</a>
+                </div>
+            </section>
+
+            <!-- Pricing Section -->
+            <section class="pricing-container">
+                <div class="container">
+                    <h2 class="section-title">Choose Your Plan</h2>
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <h3>Basic</h3>
+                            <div class="price">€10<span>One-time payment · Lifetime access</span></div>
+                            <ul class="pricing-features">
+                                <li><i class="fas fa-check"></i> All Free Features</li>
+                                <li><i class="fas fa-check"></i> Advanced Optimization</li>
+                                <li><i class="fas fa-check"></i> Priority Updates</li>
+                                <li><i class="fas fa-times"></i> Exclusive Tools</li>
+                                <li><i class="fas fa-times"></i> Priority Support</li>
+                                <li><i class="fas fa-times"></i> Custom Configurations</li>
+                            </ul>
+                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">Get Started</a>
+                        </div>
+
+                        <div class="pricing-card featured">
+                            <h3>Pro</h3>
+                            <div class="price">€25<span>One-time payment · Lifetime access</span></div>
+                            <ul class="pricing-features">
+                                <li><i class="fas fa-check"></i> All Basic Features</li>
+                                <li><i class="fas fa-check"></i> Exclusive Tools</li>
+                                <li><i class="fas fa-check"></i> Priority Support</li>
+                                <li><i class="fas fa-check"></i> Custom Configurations</li>
+                                <li><i class="fas fa-check"></i> Early Access to New Features</li>
+                                <li><i class="fas fa-times"></i> Multi-system License</li>
+                            </ul>
+                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn-premium">Get Pro</a>
+                        </div>
+
+                        <div class="pricing-card">
+                            <h3>Premium</h3>
+                            <div class="price">€50<span>One-time payment · Lifetime access</span></div>
+                            <ul class="pricing-features">
+                                <li><i class="fas fa-check"></i> All Pro Features</li>
+                                <li><i class="fas fa-check"></i> Multi-system License</li>
+                                <li><i class="fas fa-check"></i> Dedicated Support</li>
+                                <li><i class="fas fa-check"></i> Custom Development</li>
+                                <li><i class="fas fa-check"></i> Team Management</li>
+                                <li><i class="fas fa-check"></i> Beta Program Access</li>
+                            </ul>
+                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">Get Premium</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Premium Features Section -->
+            <section class="features" style="background-color: #000;">
+                <div class="container">
+                    <div class="features-container">
+                        <h2 class="section-title">Premium Features</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-microchip"></i>
+                                </div>
+                                <h3>Advanced CPU Optimization</h3>
+                                <p>Dedicated algorithms for maximum CPU performance with intelligent thread management and thermal control.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-memory"></i>
+                                </div>
+                                <h3>Memory Management</h3>
+                                <p>Advanced RAM optimization with intelligent caching and memory compression for superior performance.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <h3>Network Acceleration</h3>
+                                <p>Optimize network settings for gaming, streaming, and downloads with custom TCP/IP configurations.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <h3>Gaming Mode</h3>
+                                <p>Automatic system optimization when launching games for maximum FPS and reduced input lag.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3>Enhanced Security</h3>
+                                <p>Advanced security features including real-time monitoring and automated threat detection.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <h3>Performance Analytics</h3>
+                                <p>Detailed performance reports and optimization suggestions based on your system usage patterns.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Downloads Page -->
+    <div id="downloads" class="page">
+        <div class="page-content">
+            <div class="container">
+                <div class="hero">
+                    <h1>Downloads</h1>
+                    <p>Get the latest version of our free tweak</p>
+                </div>
+
+                <div class="downloads-content">
+                    <div class="download-card">
+                        <h3>Kavea Tweaks Free</h3>
+                        <p>Our powerful system optimization tweak for enhanced performance and stability. Completely free and regularly updated.</p>
+                        <div class="version-info">
+                            <span>Version: 2.1.0</span>
+                            <span>Size: 22.5 KB</span>
+                        </div>
+                        <a href="https://gofile.io/d/k69oxu" target="_blank" class="btn"><i class="fas fa-download"></i> Download Now</a>
+                    </div>
+
+                    <div class="key-info">
+                        <h4>Activation Key</h4>
+                        <p>After downloading, use the following key to activate your free version of Kavea Tweaks:</p>
+                        <div class="key-box">KaveaFreeTweak</div>
+                        <p>Copy this key and paste it when prompted during the installation process.</p>
+                    </div>
+                </div>
+
+                <div class="support-section" style="margin-top: 80px;">
+                    <h2>Installation Guide</h2>
+                    <p>Follow these steps to install Kavea Tweaks:</p>
+                    <ol style="color: #ccc; margin-left: 20px; font-size: 18px; line-height: 1.8;">
+                        <li>Download the Kavea Tweaks file from the link above</li>
+                        <li>Extract the ZIP file to your desired location</li>
+                        <li>Run the installer as Administrator</li>
+                        <li>When prompted, enter the activation key: <strong>KaveaFreeTweak</strong></li>
+                        <li>Follow the on-screen instructions</li>
+                        <li>Restart your system for changes to take effect</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Page -->
+    <div id="support" class="page">
+        <div class="page-content">
+            <div class="container">
+                <div class="hero">
+                    <h1>Support</h1>
+                    <p>Get help with installation, troubleshooting, and general questions</p>
+                </div>
+
+                <div class="support-content">
+                    <div class="support-section">
+                        <h2>Frequently Asked Questions</h2>
+
+                        <div class="faq-item">
+                            <div class="faq-question">How do I install Kavea Tweaks?</div>
+                            <div class="faq-answer">
+                                Download the installer from our Downloads page, run it as Administrator, and follow the on-screen instructions. When prompted, enter the activation key: <strong>KaveaFreeTweak</strong>. A system restart may be required for changes to take effect.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">Is Kavea Tweaks safe to use?</div>
+                            <div class="faq-answer">
+                                Yes, Kavea Tweaks is completely safe. We do not collect any personal data and all optimizations are reversible. Our tweaks are regularly tested for stability and security.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">Will this work on my system?</div>
+                            <div class="faq-answer">
+                                Kavea Tweaks is compatible with Windows 10 and Windows 11. We recommend checking the system requirements on the download page for specific version compatibility.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">How can I revert changes?</div>
+                            <div class="faq-answer">
+                                You can use the built-in restore feature in Kavea Tweaks or reinstall the tweak to reset all settings to default. All changes are designed to be non-destructive.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">Where do I enter the activation key?</div>
+                            <div class="faq-answer">
+                                After running the installer, you will be prompted to enter the activation key. Simply copy and paste <strong>KaveaFreeTweak</strong> into the activation field to continue with the installation.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="support-section">
+                        <h2>Contact Support</h2>
+                        <p>If you need further assistance, you can reach us through the following channels:</p>
+
+                        <div style="margin-top: 30px;">
+                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn" style="margin-right: 15px;">
+                                <i class="fab fa-discord"></i> Discord Server
+                            </a>
+                            <a href="mailto:support@kaveatweaks.com" class="btn btn-outline">
+                                <i class="fas fa-envelope"></i> Email Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discord Page -->
+    <div id="discord" class="page">
+        <div class="page-content">
+            <!-- Discord Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1>Join Our Discord Community</h1>
+                    <p>Connect with thousands of users, get instant support, and stay updated with the latest news and updates from Kavea Tweaks.</p>
+                    <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="discord-btn">
+                        <i class="fab fa-discord"></i> Join Our Discord
+                    </a>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features">
+                <div class="container">
+                    <div class="features-container">
+                        <h2 class="section-title">Why Join Our Discord?</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h3>Instant Support</h3>
+                                <p>Get help from our community and support team in real-time. No more waiting for email responses.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <h3>Stay Updated</h3>
+                                <p>Be the first to know about new releases, updates, and exclusive announcements.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3>Community Driven</h3>
+                                <p>Share your experiences, suggest features, and connect with other Kavea Tweaks users.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats">
+                <div class="container">
+                    <h2 class="section-title">Our Growing Community</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">2k+</div>
+                            <div class="stat-label">Community Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Active Support</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">99%</div>
+                            <div class="stat-label">Response Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">Instant</div>
+                            <div class="stat-label">Help Available</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Team Section -->
+            <section class="team">
+                <div class="container">
+                    <h2 class="section-title">Meet Our Team</h2>
+                    <div class="team-members">
+                        <div class="team-member">
+                            <div class="member-avatar">
+                                <!-- Profile picture -->
+                                <img src="profile.png" alt="Developer Profile Picture" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+                            </div>
+                            <div class="member-info">
+                                <h2>the.allium</h2>
+                                <div class="member-role">Founder & Lead Developer</div>
+                                <p class="member-bio">Passionate about creating high-performance software solutions. With 5+ years of experience in system optimization.</p>
+                                <a href="https://discord.com/invite/FxenQbsuAM" class="discord-handle" target="_blank">
+                                    <i class="fab fa-discord"></i> the.allium
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="team-member">
+                            <div class="member-avatar">
+                                <!-- Profile picture -->
+                                <img src="maka.png" alt="MakaKnacker Profile Picture" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>M</div>';">
+                            </div>
+                            <div class="member-info">
+                                <h2>MakaKnacker</h2>
+                                <div class="member-role">Community Manager & Support</div>
+                                <p class="member-bio">Dedicated to helping users get the most out of our software. Always available to answer your questions.</p>
+                                <a href="https://discord.com/invite/FxenQbsuAM" class="discord-handle" target="_blank">
+                                    <i class="fab fa-discord"></i> matti_main_plug
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Premium Section -->
+            <section class="premium">
+                <div class="container">
+                    <div class="premium-content">
+                        <h2>Get Premium Support</h2>
+                        <p>Join our Discord to get access to premium support channels and faster response times from our development team.</p>
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">Join Discord for Support</a>
+
+                        <div class="premium-features">
+                            <div class="premium-feature">
+                                <i class="fas fa-headset"></i>
+                                <h3>Priority Support</h3>
+                                <p>Get your questions answered quickly in our dedicated premium support channels.</p>
+                            </div>
+                            <div class="premium-feature">
+                                <i class="fas fa-lightbulb"></i>
+                                <h3>Feature Requests</h3>
+                                <p>Suggest new features and vote on upcoming developments for Kavea Tweaks.</p>
+                            </div>
+                            <div class="premium-feature">
+                                <i class="fas fa-code-branch"></i>
+                                <h3>Beta Testing</h3>
+                                <p>Get early access to new features and help us test upcoming releases.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Donation Section -->
+            <section class="donation">
+                <div class="container">
+                    <div class="donation-container">
+                        <h2>Support Our Community</h2>
+                        <p>If you enjoy using Kavea Tweaks and want to support future development, consider making a donation. Your contribution helps us continue providing free tweaks and developing new features.</p>
+
+                        <div class="crypto-address">
+                            <p>Send Litecoin (LTC) to:</p>
+                            <div class="address-box">
+                                <span class="address-text" id="ltc-address-discord">LgMrnCNb1aWcUiCVckEWUKEQpmwsvjFxfU</span>
+                                <button class="copy-btn" id="copy-ltc-discord">
+                                    <i class="far fa-copy"></i> Copy Address
+                                </button>
+                            </div>
+                        </div>
+
+                        <p>Thank you for your support! It means a lot to us.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Kavea Tweaks</h3>
+                    <p>Professional tweaks</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
+                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
+                        <li><a href="#" onclick="showPage('support')">Support</a></li>
+                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kavea Tweaks. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            
+            // Check if page is being loaded for the first time or refreshed
+            if (performance.navigation.type === performance.navigation.TYPE_RELOAD || 
+                performance.navigation.type === performance.navigation.TYPE_NAVIGATE) {
+                
+                // Show loading screen only for initial page loads and refreshes
+                loadingScreen.style.display = 'flex';
+                
+                // Fast loading simulation (only 1 second)
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 20;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        
+                        // Hide loading screen after completion
+                        setTimeout(() => {
+                            loadingScreen.classList.add('hidden');
+                        }, 300);
+                    }
+                    loadingProgress.style.width = `${progress}%`;
+                }, 200);
+            } else {
+                // Hide loading screen if page is cached
+                loadingScreen.style.display = 'none';
+            }
+        });
+
+        // Right-click protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Copy address functionality with enhanced animation
+        document.getElementById('copy-ltc').addEventListener('click', function () {
+            const address = document.getElementById('ltc-address').textContent;
+            navigator.clipboard.writeText(address).then(function () {
+                // Show notification with animation
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check-circle"></i> LTC Address Copied to Clipboard!';
+                document.body.appendChild(notification);
+
+                // Trigger animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove notification after 3 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                    setTimeout(function () {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            }).catch(function (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                // Show notification with animation
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check-circle"></i> LTC Address Copied to Clipboard!';
+                document.body.appendChild(notification);
+
+                // Trigger animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove notification after 3 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                    setTimeout(function () {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            });
+        });
+
+        // Copy address functionality for Discord page
+        document.getElementById('copy-ltc-discord').addEventListener('click', function () {
+            const address = document.getElementById('ltc-address-discord').textContent;
+            navigator.clipboard.writeText(address).then(function () {
+                // Show notification with animation
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check-circle"></i> LTC Address Copied to Clipboard!';
+                document.body.appendChild(notification);
+
+                // Trigger animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove notification after 3 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                    setTimeout(function () {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            }).catch(function (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                // Show notification with animation
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check-circle"></i> LTC Address Copied to Clipboard!';
+                document.body.appendChild(notification);
+
+                // Trigger animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove notification after 3 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                    setTimeout(function () {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            });
+        });
+
+        // Header and announcement bar hide/show on scroll
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const announcement = document.getElementById('announcement');
+
+        window.addEventListener('scroll', function () {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down - hide quickly (0.3s)
+                navbar.classList.add('hidden');
+                announcement.classList.add('hidden');
+            } else {
+                // Scrolling up - show slowly (0.9s - 50% slower)
+                navbar.classList.remove('hidden');
+                announcement.classList.remove('hidden');
+            }
+
+            lastScrollTop = scrollTop;
+        });
+    </script>
+</body>
+</html>
