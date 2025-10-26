@@ -169,9 +169,14 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         nav ul li a:hover {
+            color: #a24ae2;
+        }
+
+        nav ul li a.active {
             color: #a24ae2;
         }
 
@@ -926,6 +931,7 @@
             color: #aaa;
             text-decoration: none;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         .footer-column ul li a:hover {
@@ -1074,17 +1080,17 @@
     <header id="navbar">
         <div class="container">
             <div class="header-content">
-                <a class="logo" href="/">
+                <a class="logo" onclick="showPage('home')">
                     <img src="kavea.png" alt="KaveaTweaks.xyz Logo" class="logo-img">
                     KaveaTweaks.xyz
                 </a>
                 <nav>
                     <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/premium">Premium</a></li>
-                        <li><a href="/downloads">Downloads</a></li>
-                        <li><a href="/support">Support</a></li>
-                        <li><a href="/discord">Discord</a></li>
+                        <li><a class="nav-link active" onclick="showPage('home')">Home</a></li>
+                        <li><a class="nav-link" onclick="showPage('premium')">Premium</a></li>
+                        <li><a class="nav-link" onclick="showPage('downloads')">Downloads</a></li>
+                        <li><a class="nav-link" onclick="showPage('support')">Support</a></li>
+                        <li><a class="nav-link" onclick="showPage('discord')">Discord</a></li>
                     </ul>
                 </nav>
             </div>
@@ -1099,7 +1105,7 @@
                 <div class="container">
                     <h1>The Ultimate PC Optimization Solution</h1>
                     <p>Experience unparalleled performance and optimization with KaveaTweaks.xyz. Completely free, regularly updated, and trusted by thousands of users worldwide.</p>
-                    <a href="/downloads" class="btn">Download KaveaTweaks.xyz</a>
+                    <a onclick="showPage('downloads')" class="btn">Download KaveaTweaks.xyz</a>
                 </div>
             </section>
 
@@ -1204,7 +1210,7 @@
                     <div class="premium-content">
                         <h2>Premium Features Available</h2>
                         <p>Take your PC optimization to the next level with our premium tweaks. Get better FPS, reduced input delay, and exclusive features not available in the free version.</p>
-                        <a href="/premium" class="btn">View Premium Plans</a>
+                        <a onclick="showPage('premium')" class="btn">View Premium Plans</a>
 
                         <div class="premium-features">
                             <div class="premium-feature">
@@ -1316,7 +1322,7 @@
                                     </div>
                                 </li>
                             </ul>
-                            <a href="/downloads" class="btn">Download Free</a>
+                            <a onclick="showPage('downloads')" class="btn">Download Free</a>
                         </div>
 
                         <!-- Basic Tier (Middle) -->
@@ -1781,11 +1787,11 @@
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/premium">Premium</a></li>
-                        <li><a href="/downloads">Downloads</a></li>
-                        <li><a href="/support">Support</a></li>
-                        <li><a href="/discord">Discord</a></li>
+                        <li><a onclick="showPage('home')">Home</a></li>
+                        <li><a onclick="showPage('premium')">Premium</a></li>
+                        <li><a onclick="showPage('downloads')">Downloads</a></li>
+                        <li><a onclick="showPage('support')">Support</a></li>
+                        <li><a onclick="showPage('discord')">Discord</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -1804,16 +1810,7 @@
     </footer>
 
     <script>
-        // Page routing functionality
-        const routes = {
-            '': 'home',
-            'premium': 'premium',
-            'downloads': 'downloads',
-            'support': 'support',
-            'discord': 'discord'
-        };
-
-        // Function to show page and update URL
+        // Function to show page and update navigation
         function showPage(pageId) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
@@ -1823,10 +1820,15 @@
             // Show selected page
             document.getElementById(pageId).classList.add('active');
 
-            // Update URL without refreshing the page
-            const route = routes[pageId] || '';
-            const newUrl = pageId === 'home' ? `${window.location.origin}/` : `${window.location.origin}/${route}`;
-            window.history.pushState({page: pageId}, '', newUrl);
+            // Update navigation active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.textContent.toLowerCase() === pageId) {
+                    link.classList.add('active');
+                }
+            });
 
             // Update document title
             const pageTitles = {
@@ -1842,69 +1844,13 @@
             window.scrollTo(0, 0);
         }
 
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', function(event) {
-            const path = window.location.pathname.substring(1); // Remove leading slash
-            const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
-            
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-
-            // Show the correct page
-            document.getElementById(pageId).classList.add('active');
-
-            // Update document title
-            const pageTitles = {
-                'home': 'KaveaTweaks.xyz - PC Optimization',
-                'premium': 'Premium - KaveaTweaks.xyz',
-                'downloads': 'Downloads - KaveaTweaks.xyz',
-                'support': 'Support - KaveaTweaks.xyz',
-                'discord': 'Discord - KaveaTweaks.xyz'
-            };
-            document.title = pageTitles[pageId] || 'KaveaTweaks.xyz - PC Optimization';
-        });
-
-        // Initial page load - check URL and show appropriate page
+        // Initial page load - show home page
         document.addEventListener('DOMContentLoaded', function() {
-            const path = window.location.pathname.substring(1); // Remove leading slash
-            const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
-            
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-
-            // Show the correct page
-            document.getElementById(pageId).classList.add('active');
-
-            // Update document title
-            const pageTitles = {
-                'home': 'KaveaTweaks.xyz - PC Optimization',
-                'premium': 'Premium - KaveaTweaks.xyz',
-                'downloads': 'Downloads - KaveaTweaks.xyz',
-                'support': 'Support - KaveaTweaks.xyz',
-                'discord': 'Discord - KaveaTweaks.xyz'
-            };
-            document.title = pageTitles[pageId] || 'KaveaTweaks.xyz - PC Optimization';
+            // Show home page by default
+            showPage('home');
 
             // Scroll to top
             window.scrollTo(0, 0);
-        });
-
-        // Intercept all internal link clicks
-        document.addEventListener('click', function(e) {
-            // Check if the clicked element is an anchor tag with an internal link
-            if (e.target.tagName === 'A' && e.target.getAttribute('href') && 
-                e.target.getAttribute('href').startsWith('/')) {
-                
-                e.preventDefault();
-                const path = e.target.getAttribute('href').substring(1); // Remove leading slash
-                const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
-                
-                showPage(pageId);
-            }
         });
 
         // Loading screen functionality
