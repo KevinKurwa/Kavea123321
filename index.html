@@ -1074,17 +1074,17 @@
     <header id="navbar">
         <div class="container">
             <div class="header-content">
-                <a class="logo" href="#" onclick="showPage('home')">
+                <a class="logo" href="/home">
                     <img src="kavea.png" alt="KaveaTweaks.xyz Logo" class="logo-img">
                     KaveaTweaks.xyz
                 </a>
                 <nav>
                     <ul>
-                        <li><a href="#" onclick="showPage('home')">Home</a></li>
-                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
-                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
-                        <li><a href="#" onclick="showPage('support')">Support</a></li>
-                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                        <li><a href="/home">Home</a></li>
+                        <li><a href="/premium">Premium</a></li>
+                        <li><a href="/downloads">Downloads</a></li>
+                        <li><a href="/support">Support</a></li>
+                        <li><a href="/discord">Discord</a></li>
                     </ul>
                 </nav>
             </div>
@@ -1099,7 +1099,7 @@
                 <div class="container">
                     <h1>The Ultimate PC Optimization Solution</h1>
                     <p>Experience unparalleled performance and optimization with KaveaTweaks.xyz. Completely free, regularly updated, and trusted by thousands of users worldwide.</p>
-                    <a href="#" onclick="showPage('downloads')" class="btn">Download KaveaTweaks.xyz</a>
+                    <a href="/downloads" class="btn">Download KaveaTweaks.xyz</a>
                 </div>
             </section>
 
@@ -1204,7 +1204,7 @@
                     <div class="premium-content">
                         <h2>Premium Features Available</h2>
                         <p>Take your PC optimization to the next level with our premium tweaks. Get better FPS, reduced input delay, and exclusive features not available in the free version.</p>
-                        <a href="#" onclick="showPage('premium')" class="btn">View Premium Plans</a>
+                        <a href="/premium" class="btn">View Premium Plans</a>
 
                         <div class="premium-features">
                             <div class="premium-feature">
@@ -1316,7 +1316,7 @@
                                     </div>
                                 </li>
                             </ul>
-                            <a href="#" onclick="showPage('downloads')" class="btn">Download Free</a>
+                            <a href="/downloads" class="btn">Download Free</a>
                         </div>
 
                         <!-- Basic Tier (Middle) -->
@@ -1781,11 +1781,11 @@
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="#" onclick="showPage('home')">Home</a></li>
-                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
-                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
-                        <li><a href="#" onclick="showPage('support')">Support</a></li>
-                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                        <li><a href="/home">Home</a></li>
+                        <li><a href="/premium">Premium</a></li>
+                        <li><a href="/downloads">Downloads</a></li>
+                        <li><a href="/support">Support</a></li>
+                        <li><a href="/discord">Discord</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -1891,6 +1891,22 @@
 
             // Scroll to top
             window.scrollTo(0, 0);
+        });
+
+        // Intercept all internal link clicks
+        document.addEventListener('click', function(e) {
+            // Check if the clicked element is an anchor tag with an internal link
+            if (e.target.tagName === 'A' && e.target.getAttribute('href') && 
+                e.target.getAttribute('href').startsWith('/')) {
+                
+                e.preventDefault();
+                const path = e.target.getAttribute('href').substring(1); // Remove leading slash
+                const pageId = Object.keys(routes).find(key => routes[key] === path);
+                
+                if (pageId) {
+                    showPage(pageId);
+                }
+            }
         });
 
         // Loading screen functionality
