@@ -1804,7 +1804,16 @@
     </footer>
 
     <script>
-        // SIMPLE PAGE NAVIGATION - WORKS EVERYWHERE
+        // Page routing functionality
+        const routes = {
+            'home': 'home',
+            'premium': 'premium',
+            'downloads': 'downloads',
+            'support': 'support',
+            'discord': 'discord'
+        };
+
+        // Function to show page and update URL
         function showPage(pageId) {
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
@@ -1814,9 +1823,75 @@
             // Show selected page
             document.getElementById(pageId).classList.add('active');
 
+            // Update URL without refreshing the page
+            const route = routes[pageId] || 'home';
+            const newUrl = `${window.location.origin}/${route}`;
+            window.history.pushState({page: pageId}, '', newUrl);
+
+            // Update document title
+            const pageTitles = {
+                'home': 'KaveaTweaks.xyz - PC Optimization',
+                'premium': 'Premium - KaveaTweaks.xyz',
+                'downloads': 'Downloads - KaveaTweaks.xyz',
+                'support': 'Support - KaveaTweaks.xyz',
+                'discord': 'Discord - KaveaTweaks.xyz'
+            };
+            document.title = pageTitles[pageId] || 'KaveaTweaks.xyz - PC Optimization';
+
             // Scroll to top
             window.scrollTo(0, 0);
         }
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            const path = window.location.pathname.substring(1); // Remove leading slash
+            const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show the correct page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update document title
+            const pageTitles = {
+                'home': 'KaveaTweaks.xyz - PC Optimization',
+                'premium': 'Premium - KaveaTweaks.xyz',
+                'downloads': 'Downloads - KaveaTweaks.xyz',
+                'support': 'Support - KaveaTweaks.xyz',
+                'discord': 'Discord - KaveaTweaks.xyz'
+            };
+            document.title = pageTitles[pageId] || 'KaveaTweaks.xyz - PC Optimization';
+        });
+
+        // Initial page load - check URL and show appropriate page
+        document.addEventListener('DOMContentLoaded', function() {
+            const path = window.location.pathname.substring(1); // Remove leading slash
+            const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show the correct page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update document title
+            const pageTitles = {
+                'home': 'KaveaTweaks.xyz - PC Optimization',
+                'premium': 'Premium - KaveaTweaks.xyz',
+                'downloads': 'Downloads - KaveaTweaks.xyz',
+                'support': 'Support - KaveaTweaks.xyz',
+                'discord': 'Discord - KaveaTweaks.xyz'
+            };
+            document.title = pageTitles[pageId] || 'KaveaTweaks.xyz - PC Optimization';
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
 
         // Loading screen functionality
         document.addEventListener('DOMContentLoaded', function() {
