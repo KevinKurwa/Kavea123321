@@ -1074,13 +1074,13 @@
     <header id="navbar">
         <div class="container">
             <div class="header-content">
-                <a class="logo" href="/home">
+                <a class="logo" href="/">
                     <img src="kavea.png" alt="KaveaTweaks.xyz Logo" class="logo-img">
                     KaveaTweaks.xyz
                 </a>
                 <nav>
                     <ul>
-                        <li><a href="/home">Home</a></li>
+                        <li><a href="/">Home</a></li>
                         <li><a href="/premium">Premium</a></li>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/support">Support</a></li>
@@ -1510,7 +1510,7 @@
                             <span>Version: 2.1.0</span>
                             <span>Size: 22.5 KB</span>
                         </div>
-                        <a href="https://gofile.io/d/k69oxu" target="_blank" class="btn"><i class="fas fa-download"></i> Download Now</a>
+                        <a href="https://link-hub.net/1273719/MFil9ACZn1Rd" target="_blank" class="btn"><i class="fas fa-download"></i> Download Now</a>
                     </div>
 
                     <div class="key-info">
@@ -1781,7 +1781,7 @@
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="/home">Home</a></li>
+                        <li><a href="/">Home</a></li>
                         <li><a href="/premium">Premium</a></li>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/support">Support</a></li>
@@ -1806,7 +1806,7 @@
     <script>
         // Page routing functionality
         const routes = {
-            'home': 'home',
+            '': 'home',
             'premium': 'premium',
             'downloads': 'downloads',
             'support': 'support',
@@ -1824,8 +1824,8 @@
             document.getElementById(pageId).classList.add('active');
 
             // Update URL without refreshing the page
-            const route = routes[pageId] || 'home';
-            const newUrl = `${window.location.origin}/${route}`;
+            const route = routes[pageId] || '';
+            const newUrl = pageId === 'home' ? `${window.location.origin}/` : `${window.location.origin}/${route}`;
             window.history.pushState({page: pageId}, '', newUrl);
 
             // Update document title
@@ -1901,11 +1901,9 @@
                 
                 e.preventDefault();
                 const path = e.target.getAttribute('href').substring(1); // Remove leading slash
-                const pageId = Object.keys(routes).find(key => routes[key] === path);
+                const pageId = Object.keys(routes).find(key => routes[key] === path) || 'home';
                 
-                if (pageId) {
-                    showPage(pageId);
-                }
+                showPage(pageId);
             }
         });
 
