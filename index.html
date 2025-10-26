@@ -5,31 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="/home/">
     
-    <!-- Routing handling -->
+    <!-- Fixed Routing handling -->
     <script>
-        // Handle direct access to root and redirect to /home
-        if (window.location.pathname === '/' || 
-            window.location.pathname === '/index.html' ||
-            window.location.pathname === '/kaveatweaks.xyz/' ||
-            window.location.pathname === '/kaveatweaks.xyz/index.html') {
-            window.location.href = '/home';
-        }
-        
-        // Handle page refresh on subpages
+        // Handle routing on page load
         window.addEventListener('load', function() {
             const currentPath = window.location.pathname;
-            const validRoutes = ['/home', '/premium', '/downloads', '/support', '/discord'];
+            const basePath = '/home/';
             
-            // If we're on an invalid route that's not root, redirect to home
-            if (currentPath !== '/' && !validRoutes.includes(currentPath) && !currentPath.includes('.')) {
-                window.location.href = '/home';
+            // If we're at the root or index, redirect to home
+            if (currentPath === '/' || 
+                currentPath === '/index.html' ||
+                currentPath === '/kaveatweaks.xyz/' ||
+                currentPath === '/kaveatweaks.xyz/index.html') {
+                window.location.href = basePath;
+                return;
             }
+            
+            // If we're on an invalid route, redirect to home
+            const validRoutes = ['/home', '/premium', '/downloads', '/support', '/discord'];
+            const isValidRoute = validRoutes.some(route => currentPath.startsWith(route));
+            
+            if (!isValidRoute && !currentPath.includes('.') && !currentPath.endsWith('/')) {
+                window.location.href = basePath;
+            }
+        });
+        
+        // Handle navigation for links with base href
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override link behavior to work with base href
+            document.querySelectorAll('a[href^="/"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    // Only prevent default for our app routes
+                    if (href !== '/' && !href.includes('.')) {
+                        e.preventDefault();
+                        window.location.href = href;
+                    }
+                });
+            });
         });
     </script>
     
     <title>Kavea Tweaks - Home</title>
     <style>
-        /* Reset and base styles */
+        /* Your existing CSS styles remain the same */
         * {
             margin: 0;
             padding: 0;
