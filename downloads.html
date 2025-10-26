@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloads - Kavea Tweaks</title>
+    <link rel="icon" type="image/x-icon" href="kavea.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All CSS from the original file would go here */
+        /* For brevity, I'm including just the essential styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #a24ae2;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #a24ae2, #8a3ac8);
+            transition: width 0.3s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #8a3ac8;
+            color: white;
+            text-align: center;
+            padding: 7.5px 0;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 101;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 14px;
+            will-change: transform;
+        }
+
+        .announcement-bar.hidden {
+            transform: translateY(-100%);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #000;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 22.5px;
+            width: 100%;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: #a24ae2;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #a24ae2;
+        }
+
+        /* Page Content */
+        .page-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 142.5px;
+        }
+
+        /* Downloads Hero Section */
+        .downloads-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+        .downloads-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .downloads-hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+
+        /* Downloads Section */
+        .downloads-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .download-card {
+            background-color: #000;
+            padding: 35px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .download-card.featured {
+            border: 2px solid #a24ae2;
+            transform: scale(1.05);
+        }
+
+        .download-card.featured::before {
+            content: "Most Popular";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .download-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .download-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .download-icon {
+            font-size: 48px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .download-desc {
+            color: #ccc;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .download-features {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .download-features li {
+            margin-bottom: 10px;
+            color: #ccc;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .download-features li i {
+            color: #a24ae2;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #a24ae2;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #8a3ac8;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-premium:hover {
+            background: linear-gradient(135deg, #8a3ac8, #8a1b7a);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #a24ae2;
+            color: #a24ae2;
+        }
+
+        .btn-outline:hover {
+            background-color: #a24ae2;
+            color: #fff;
+        }
+
+        /* System Requirements */
+        .requirements {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .requirements-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .requirement-card {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .requirement-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .requirement-icon {
+            font-size: 40px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .requirement-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .requirement-card ul {
+            list-style: none;
+        }
+
+        .requirement-card ul li {
+            margin-bottom: 10px;
+            color: #ccc;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .requirement-card ul li i {
+            color: #a24ae2;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Installation Guide */
+        .installation {
+            padding: 80px 0;
+            background-color: #000;
+        }
+
+        .installation-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            margin-top: 50px;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 40px;
+            background-color: #111;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #a24ae2;
+        }
+
+        .step-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #a24ae2;
+            margin-right: 20px;
+            min-width: 40px;
+        }
+
+        .step-content h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .step-content p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #111;
+        }
+
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 20px;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 0 20px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #a24ae2;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #a24ae2;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .downloads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin: 5px 10px;
+            }
+
+            .downloads-hero h1 {
+                font-size: 36px;
+            }
+
+            .downloads-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                flex-direction: column;
+            }
+
+            .step-number {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <img src="kavea.png" alt="Kavea Tweaks Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+        </div>
+        <div class="loading-text">Loading Kavea Tweaks...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement">
+        Premium Tweaker almost Done :)
+    </div>
+
+    <!-- Header -->
+    <header id="navbar">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" href="index.html">
+                    <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
+                    Kavea <span>Tweaks</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html" class="active">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <!-- Downloads Hero Section -->
+        <section class="downloads-hero">
+            <div class="container">
+                <h1>Download Kavea Tweaks</h1>
+                <p>Get the latest version of our performance optimization software</p>
+            </div>
+        </section>
+
+        <!-- Downloads Section -->
+        <section class="downloads-container">
+            <div class="container">
+                <h2 class="section-title">Choose Your Version</h2>
+                <div class="downloads-grid">
+                    <!-- Free Version -->
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3>Free Tweaker</h3>
+                        <p class="download-desc">Basic performance optimization for everyday use. Perfect for getting started with system optimization.</p>
+                        <ul class="download-features">
+                            <li><i class="fas fa-check"></i> Essential performance tweaks</li>
+                            <li><i class="fas fa-check"></i> CPU and RAM optimization</li>
+                            <li><i class="fas fa-check"></i> Regular updates</li>
+                            <li><i class="fas fa-check"></i> Community support</li>
+                        </ul>
+                        <a href="#" class="btn">Download Free</a>
+                    </div>
+
+                    <!-- Basic Version -->
+                    <div class="download-card featured">
+                        <div class="download-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Basic Tweaker</h3>
+                        <p class="download-desc">Enhanced performance with better FPS optimization and reduced input delay for gaming.</p>
+                        <ul class="download-features">
+                            <li><i class="fas fa-check"></i> Better FPS optimization</li>
+                            <li><i class="fas fa-check"></i> Reduced input delay</li>
+                            <li><i class="fas fa-check"></i> Exclusive tools</li>
+                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> Custom game settings</li>
+                        </ul>
+                        <a href="Premium.html" class="btn-premium">Get Basic</a>
+                    </div>
+
+                    <!-- Premium Version -->
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Premium Tweaker</h3>
+                        <p class="download-desc">Maximum performance with premium features for competitive gaming and content creation.</p>
+                        <ul class="download-features">
+                            <li><i class="fas fa-check"></i> Maximum FPS boost</li>
+                            <li><i class="fas fa-check"></i> Lowest input delay</li>
+                            <li><i class="fas fa-check"></i> Advanced optimizations</li>
+                            <li><i class="fas fa-check"></i> Dedicated support</li>
+                            <li><i class="fas fa-check"></i> Premium tweaks</li>
+                        </ul>
+                        <a href="Premium.html" class="btn">Get Premium</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Requirements -->
+        <section class="requirements">
+            <div class="container">
+                <div class="requirements-container">
+                    <h2 class="section-title">System Requirements</h2>
+                    <div class="requirements-grid">
+                        <div class="requirement-card">
+                            <div class="requirement-icon">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <h3>Minimum Requirements</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Windows 10/11 (64-bit)</li>
+                                <li><i class="fas fa-check"></i> 2GB RAM</li>
+                                <li><i class="fas fa-check"></i> 100MB free storage</li>
+                                <li><i class="fas fa-check"></i> Intel/AMD processor</li>
+                                <li><i class="fas fa-check"></i> Internet connection</li>
+                            </ul>
+                        </div>
+                        <div class="requirement-card">
+                            <div class="requirement-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3>Recommended Requirements</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Windows 10/11 (64-bit)</li>
+                                <li><i class="fas fa-check"></i> 4GB RAM or more</li>
+                                <li><i class="fas fa-check"></i> 200MB free storage</li>
+                                <li><i class="fas fa-check"></i> Modern Intel/AMD processor</li>
+                                <li><i class="fas fa-check"></i> Stable internet connection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Guide -->
+        <section class="installation">
+            <div class="container">
+                <div class="installation-container">
+                    <h2 class="section-title">Installation Guide</h2>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>Download the Software</h3>
+                                <p>Click the download button above to get the latest version of Kavea Tweaks. The download will start automatically.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>Run the Installer</h3>
+                                <p>Locate the downloaded file and run the installer. Follow the on-screen instructions to install the software.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>Configure Settings</h3>
+                                <p>After installation, launch Kavea Tweaks and configure the settings according to your system and preferences.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h3>Apply Optimizations</h3>
+                                <p>Click the "Apply" button to implement the optimizations. Your system may require a restart for some changes to take effect.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq">
+            <div class="container">
+                <div class="faq-container">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is Kavea Tweaks safe to use?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, Kavea Tweaks is completely safe to use. It only modifies Windows settings that are accessible to users and doesn't make any harmful changes to your system. All optimizations are reversible.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Do I need to pay for the free version?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            No, the free version is completely free with no hidden costs. You can use all the features of the free version without any payment.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What's the difference between free and premium versions?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            The premium versions include advanced optimizations for better FPS, reduced input delay, exclusive tools, and priority support. These features require continuous development and testing, which is why they're reserved for premium users.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Can I upgrade from free to premium later?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, you can upgrade to premium at any time. Your settings and preferences will be preserved when you upgrade.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is there a refund policy for premium versions?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We offer a 30-day money-back guarantee for all premium purchases if you're not satisfied with the performance improvements.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Kavea Tweaks</h3>
+                    <p>Professional PC optimization software</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kavea Tweaks. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            
+            setTimeout(() => {
+                if (document.readyState !== 'complete') {
+                    loadingScreen.style.display = 'flex';
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 20;
+                        loadingProgress.style.width = `${progress}%`;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loadingScreen.classList.add('hidden');
+                            }, 300);
+                        }
+                    }, 200);
+                } else {
+                    loadingScreen.style.display = 'none';
+                }
+            }, 100);
+        });
+
+        // FAQ functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentNode;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Scroll handling for header
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const announcement = document.getElementById('announcement');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('hidden');
+                announcement.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+                announcement.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Right-click protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>

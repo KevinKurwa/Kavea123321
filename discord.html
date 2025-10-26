@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord - Kavea Tweaks</title>
+    <link rel="icon" type="image/x-icon" href="kavea.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All CSS from the original file would go here */
+        /* For brevity, I'm including just the essential styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #a24ae2;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #a24ae2, #8a3ac8);
+            transition: width 0.3s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #8a3ac8;
+            color: white;
+            text-align: center;
+            padding: 7.5px 0;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 101;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 14px;
+            will-change: transform;
+        }
+
+        .announcement-bar.hidden {
+            transform: translateY(-100%);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #000;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 22.5px;
+            width: 100%;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: #a24ae2;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #a24ae2;
+        }
+
+        /* Page Content */
+        .page-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 142.5px;
+        }
+
+        /* Discord Hero Section */
+        .discord-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+        .discord-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .discord-hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+
+        .discord-btn {
+            background: #5865F2;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        .discord-btn:hover {
+            background: #4752C4;
+        }
+
+        /* Discord Features Section */
+        .discord-features {
+            padding: 80px 0;
+            background-color: #000;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background-color: #000;
+            padding: 35px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .feature-desc {
+            color: #ccc;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        /* Discord Server Preview */
+        .server-preview {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .preview-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .preview-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .preview-header {
+            background-color: #5865F2;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .preview-header h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .preview-header p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .preview-channels {
+            display: flex;
+            gap: 20px;
+        }
+
+        .channels-sidebar {
+            flex: 0 0 250px;
+            background-color: #2C2F33;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .channels-sidebar h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .channel-list {
+            list-style: none;
+        }
+
+        .channel-list li {
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-list li:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .channel-list li.active {
+            background-color: rgba(88, 101, 242, 0.2);
+        }
+
+        .channel-list li i {
+            color: #8E9297;
+        }
+
+        .chat-area {
+            flex: 1;
+            background-color: #36393F;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px;
+        }
+
+        .chat-header h4 {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header h4 i {
+            color: #8E9297;
+        }
+
+        .chat-messages {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #5865F2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-author {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .message-text {
+            color: #DCDDDE;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            background-color: #40444B;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .chat-input button {
+            background-color: #5865F2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .chat-input button:hover {
+            background-color: #4752C4;
+        }
+
+        /* Discord CTA Section */
+        .discord-cta {
+            padding: 80px 0;
+            background-color: #000;
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cta-container p {
+            color: #ccc;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 0 20px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #a24ae2;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #a24ae2;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin: 5px 10px;
+            }
+
+            .discord-hero h1 {
+                font-size: 36px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-channels {
+                flex-direction: column;
+            }
+
+            .channels-sidebar {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <img src="kavea.png" alt="Kavea Tweaks Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+        </div>
+        <div class="loading-text">Loading Kavea Tweaks...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement">
+        Premium Tweaker almost Done :)
+    </div>
+
+    <!-- Header -->
+    <header id="navbar">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" href="index.html">
+                    <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
+                    Kavea <span>Tweaks</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html" class="active">Discord</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <!-- Discord Hero Section -->
+        <section class="discord-hero">
+            <div class="container">
+                <h1>Join Our Discord Community</h1>
+                <p>Connect with other Kavea Tweaks users, get support, share tips, and stay updated with the latest news</p>
+                <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="discord-btn">
+                    <i class="fab fa-discord"></i> Join Discord Server
+                </a>
+            </div>
+        </section>
+
+        <!-- Discord Features Section -->
+        <section class="discord-features">
+            <div class="container">
+                <h2 class="section-title">Why Join Our Discord?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Instant Support</h3>
+                        <p class="feature-desc">Get help from our support team and community members in real-time. No more waiting for email responses.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Active Community</h3>
+                        <p class="feature-desc">Join thousands of Kavea Tweaks users who share tips, optimization guides, and performance results.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3>Latest Updates</h3>
+                        <p class="feature-desc">Be the first to know about new features, updates, and exclusive promotions for premium users.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3>Share Ideas</h3>
+                        <p class="feature-desc">Suggest new features and improvements. Our development team actively listens to community feedback.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Gaming Community</h3>
+                        <p class="feature-desc">Connect with other gamers, share your performance improvements, and discuss gaming optimization.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h3>Exclusive Content</h3>
+                        <p class="feature-desc">Access premium-only channels with advanced optimization guides and early access to new features.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Discord Server Preview -->
+        <section class="server-preview">
+            <div class="container">
+                <div class="preview-container">
+                    <h2 class="section-title">Server Preview</h2>
+                    <div class="preview-content">
+                        <div class="preview-header">
+                            <h3>Kavea Tweaks Official Server</h3>
+                            <p>Join our community of over 5,000 members</p>
+                        </div>
+                        <div class="preview-channels">
+                            <div class="channels-sidebar">
+                                <h4>Text Channels</h4>
+                                <ul class="channel-list">
+                                    <li class="active"><i class="fas fa-hashtag"></i> welcome</li>
+                                    <li><i class="fas fa-hashtag"></i> announcements</li>
+                                    <li><i class="fas fa-hashtag"></i> general</li>
+                                    <li><i class="fas fa-hashtag"></i> support</li>
+                                    <li><i class="fas fa-hashtag"></i> performance-results</li>
+                                    <li><i class="fas fa-hashtag"></i> gaming</li>
+                                    <li><i class="fas fa-hashtag"></i> premium-support</li>
+                                    <li><i class="fas fa-hashtag"></i> suggestions</li>
+                                </ul>
+                                <h4>Voice Channels</h4>
+                                <ul class="channel-list">
+                                    <li><i class="fas fa-volume-up"></i> General VC</li>
+                                    <li><i class="fas fa-volume-up"></i> Gaming VC</li>
+                                    <li><i class="fas fa-volume-up"></i> Support VC</li>
+                                </ul>
+                            </div>
+                            <div class="chat-area">
+                                <div class="chat-header">
+                                    <h4><i class="fas fa-hashtag"></i> welcome</h4>
+                                </div>
+                                <div class="chat-messages">
+                                    <div class="message">
+                                        <div class="message-avatar" style="background-color: #5865F2;">KT</div>
+                                        <div class="message-content">
+                                            <div class="message-author">KaveaTweaks</div>
+                                            <div class="message-text">Welcome to the official Kavea Tweaks Discord server! Please read the rules in #rules and introduce yourself in #introductions.</div>
+                                        </div>
+                                    </div>
+                                    <div class="message">
+                                        <div class="message-avatar" style="background-color: #ED4245;">JG</div>
+                                        <div class="message-content">
+                                            <div class="message-author">JohnGamer</div>
+                                            <div class="message-text">Just installed Kavea Tweaks and my FPS in Fortnite went from 120 to 160! Amazing software!</div>
+                                        </div>
+                                    </div>
+                                    <div class="message">
+                                        <div class="message-avatar" style="background-color: #57F287;">SP</div>
+                                        <div class="message-content">
+                                            <div class="message-author">SarahPro</div>
+                                            <div class="message-text">The premium version reduced my input delay significantly. Well worth the investment!</div>
+                                        </div>
+                                    </div>
+                                    <div class="message">
+                                        <div class="message-avatar" style="background-color: #FEE75C;">MD</div>
+                                        <div class="message-content">
+                                            <div class="message-author">MikeDev</div>
+                                            <div class="message-text">If anyone needs help with installation, feel free to ask in #support. We're here to help!</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chat-input">
+                                    <input type="text" placeholder="Message #welcome">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Discord CTA Section -->
+        <section class="discord-cta">
+            <div class="container">
+                <div class="cta-container">
+                    <h2>Ready to Join?</h2>
+                    <p>Connect with our community today and get the most out of Kavea Tweaks</p>
+                    <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="discord-btn" style="font-size: 20px; padding: 18px 50px;">
+                        <i class="fab fa-discord"></i> Join Our Discord
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Kavea Tweaks</h3>
+                    <p>Professional PC optimization software</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kavea Tweaks. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            
+            setTimeout(() => {
+                if (document.readyState !== 'complete') {
+                    loadingScreen.style.display = 'flex';
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 20;
+                        loadingProgress.style.width = `${progress}%`;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loadingScreen.classList.add('hidden');
+                            }, 300);
+                        }
+                    }, 200);
+                } else {
+                    loadingScreen.style.display = 'none';
+                }
+            }, 100);
+        });
+
+        // Channel switching functionality
+        document.querySelectorAll('.channel-list li').forEach(channel => {
+            channel.addEventListener('click', () => {
+                document.querySelector('.channel-list li.active').classList.remove('active');
+                channel.classList.add('active');
+                
+                const channelName = channel.textContent.trim();
+                document.querySelector('.chat-header h4').innerHTML = `<i class="fas fa-hashtag"></i> ${channelName}`;
+            });
+        });
+
+        // Scroll handling for header
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const announcement = document.getElementById('announcement');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('hidden');
+                announcement.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+                announcement.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Right-click protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>

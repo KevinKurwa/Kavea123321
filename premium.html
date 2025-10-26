@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium - Kavea Tweaks</title>
+    <link rel="icon" type="image/x-icon" href="kavea.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All CSS from the original file would go here */
+        /* For brevity, I'm including just the essential styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #a24ae2;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #a24ae2, #8a3ac8);
+            transition: width 0.3s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #8a3ac8;
+            color: white;
+            text-align: center;
+            padding: 7.5px 0;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 101;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 14px;
+            will-change: transform;
+        }
+
+        .announcement-bar.hidden {
+            transform: translateY(-100%);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #000;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 22.5px;
+            width: 100%;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: #a24ae2;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #a24ae2;
+        }
+
+        /* Page Content */
+        .page-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 142.5px;
+        }
+
+        /* Premium Hero Section */
+        .premium-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+        .premium-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .premium-hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+
+        /* Premium Button */
+        .btn-premium {
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-premium:hover {
+            background: linear-gradient(135deg, #8a3ac8, #8a1b7a);
+        }
+
+        /* Pricing Section */
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background-color: #000;
+            padding: 35px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 384px;
+            min-height: 650px;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #a24ae2;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: "Most Popular";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .pricing-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .pricing-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .price {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price span {
+            font-size: 18px;
+            color: #ccc;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .pricing-features li {
+            margin-bottom: 14px;
+            color: #ccc;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li i {
+            color: #a24ae2;
+            margin-top: 3px;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .feature-text {
+            flex-grow: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #a24ae2;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #8a3ac8;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .features-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Donation Section */
+        .donation {
+            padding: 80px 0;
+            text-align: center;
+            background-color: #111;
+        }
+
+        .donation-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .donation h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .donation p {
+            color: #ccc;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .crypto-address {
+            background-color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .crypto-address p {
+            margin-bottom: 10px;
+            color: #aaa;
+        }
+
+        .address-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+
+        .address-text {
+            font-family: monospace;
+            font-size: 16px;
+            color: #a24ae2;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background-color: #a24ae2;
+        }
+
+        /* Enhanced Copy Notification with Animation */
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #a24ae2;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .copy-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .copy-notification i {
+            font-size: 20px;
+            animation: bounce 0.5s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-5px);
+            }
+
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Key Information Section */
+        .key-info {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .key-info h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #a24ae2;
+        }
+
+        .key-info p {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 0 20px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #a24ae2;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #a24ae2;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .pricing-grid {
+                flex-wrap: wrap;
+            }
+            
+            .pricing-card {
+                width: 100%;
+                max-width: 384px;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin: 5px 10px;
+            }
+
+            .premium-hero h1 {
+                font-size: 36px;
+            }
+
+            .pricing-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-card {
+                width: 100%;
+                max-width: 384px;
+            }
+
+            .address-box {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .copy-btn {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <img src="kavea.png" alt="Kavea Tweaks Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+        </div>
+        <div class="loading-text">Loading Kavea Tweaks...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement">
+        Premium Tweaker almost Done :)
+    </div>
+
+    <!-- Header -->
+    <header id="navbar">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" href="index.html">
+                    <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
+                    Kavea <span>Tweaks</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html" class="active">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <!-- Premium Hero Section -->
+        <section class="premium-hero">
+            <div class="container">
+                <h1>Premium Kavea Tweaks</h1>
+                <p>Unlock better FPS, reduced input delay, and exclusive performance features</p>
+                <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn-premium">Purchase on Discord</a>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing-container">
+            <div class="container">
+                <h2 class="section-title">Choose Your PC Tweaker</h2>
+                <div class="pricing-grid">
+                    <!-- Free Tier (Left) -->
+                    <div class="pricing-card">
+                        <h3>Free Tweaker</h3>
+                        <div class="price">€0<span>Completely free · No payment required</span></div>
+                        <ul class="pricing-features">
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Free System Optimization</div>
+                                    <div class="feature-desc">Essential performance tweaks for everyday use</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Performance Tweaks</div>
+                                    <div class="feature-desc">Optimize CPU, RAM, and storage for better performance</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Regular Updates</div>
+                                    <div class="feature-desc">Get the latest improvements and bug fixes</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Community Support</div>
+                                    <div class="feature-desc">Access our Discord community for help</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-times"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Better FPS & Input Delay</div>
+                                    <div class="feature-desc">Premium-only gaming performance optimizations</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-times"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Advanced Features</div>
+                                    <div class="feature-desc">Exclusive performance enhancements</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="Downloads.html" class="btn">Download Free</a>
+                    </div>
+
+                    <!-- Basic Tier (Middle) -->
+                    <div class="pricing-card featured">
+                        <h3>Basic Tweaker</h3>
+                        <div class="price">€25<span>One-time payment · Lifetime access</span></div>
+                        <ul class="pricing-features">
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Better Features</div>
+                                    <div class="feature-desc">Everything better optimized</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Better FPS Optimization</div>
+                                    <div class="feature-desc">Significant FPS improvements for gaming</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Reduced Input Delay</div>
+                                    <div class="feature-desc">Minimize input lag for responsive gaming</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Exclusive Tools</div>
+                                    <div class="feature-desc">Access to premium-only utilities and features</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Priority Support</div>
+                                    <div class="feature-desc">Faster response times from our team</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Custom Settings for Games</div>
+                                    <div class="feature-desc">Like Fortnite Potato Grahpics for low end pc or the best Performance</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn-premium">Get Basic</a>
+                    </div>
+
+                    <!-- Premium Tier (Right) -->
+                    <div class="pricing-card">
+                        <h3>Premium Tweaker</h3>
+                        <div class="price">€50<span>One-time payment · Lifetime access</span></div>
+                        <ul class="pricing-features">
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Premium Features</div>
+                                    <div class="feature-desc">Everything Better and Mostly Optimized for the best Perforamnce</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Maximum FPS Boost</div>
+                                    <div class="feature-desc">Ultimate FPS optimization for competitive gaming</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Lowest Input Delay</div>
+                                    <div class="feature-desc">Minimal input lag for competitive advantage</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Custom Game Settings</div>
+                                    <div class="feature-desc">Better And More Games</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Dedicated Support</div>
+                                    <div class="feature-desc">Direct access to our development team</div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check"></i>
+                                <div class="feature-text">
+                                    <div class="feature-title">Premium Tweaks</div>
+                                    <div class="feature-desc">Acces Premium Tweaks which increase overall performance</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">Get Premium</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Premium Features Section -->
+        <section class="features" style="background-color: #000;">
+            <div class="container">
+                <div class="features-container">
+                    <h2 class="section-title">Premium Performance Features</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <h3>Better FPS Performance</h3>
+                            <p>Advanced gaming optimizations that significantly increase FPS in all your favorite games for smoother gameplay.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3>Reduced Input Delay</h3>
+                            <p>Minimize input lag for more responsive controls and competitive advantage in fast-paced games.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <h3>Gaming Mode</h3>
+                            <p>Automatic system optimization when launching games for maximum FPS and reduced input lag.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <h3>Advanced CPU Optimization</h3>
+                            <p>Dedicated algorithms for maximum CPU performance with intelligent thread management and thermal control.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-memory"></i>
+                            </div>
+                            <h3>Memory Management</h3>
+                            <p>Advanced RAM optimization with intelligent caching and memory compression for superior performance.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                            <h3>Network Acceleration</h3>
+                            <p>Optimize network settings for gaming, streaming, and downloads with custom TCP/IP configurations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Important Notice Section -->
+        <section class="donation" style="background-color: #000;">
+            <div class="container">
+                <div class="donation-container">
+                    <h2>Important Notice</h2>
+                    <p>Premium software licenses are strictly personal and cannot be shared. Each license is tied to your specific system and usage. Sharing premium software violates our terms of service and may result in license revocation.</p>
+                    <div class="key-info" style="margin-top: 30px;">
+                        <h4>Why Premium is Worth It</h4>
+                        <p>Our premium versions offer exclusive performance optimizations that significantly improve FPS and reduce input delay - features that are not available in the free version. These advanced optimizations require continuous development and testing, which is why they're reserved for our premium users.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Kavea Tweaks</h3>
+                    <p>Professional PC optimization software</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kavea Tweaks. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            
+            setTimeout(() => {
+                if (document.readyState !== 'complete') {
+                    loadingScreen.style.display = 'flex';
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 20;
+                        loadingProgress.style.width = `${progress}%`;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loadingScreen.classList.add('hidden');
+                            }, 300);
+                        }
+                    }, 200);
+                } else {
+                    loadingScreen.style.display = 'none';
+                }
+            }, 100);
+        });
+
+        // Copy address functionality
+        document.getElementById('copy-ltc').addEventListener('click', function() {
+            const address = document.getElementById('ltc-address').textContent;
+            navigator.clipboard.writeText(address).then(function() {
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check-circle"></i> LTC Address Copied to Clipboard!';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.classList.add('show'), 10);
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            });
+        });
+
+        // Scroll handling for header
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const announcement = document.getElementById('announcement');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('hidden');
+                announcement.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+                announcement.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Right-click protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>

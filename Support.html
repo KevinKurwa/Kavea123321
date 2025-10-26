@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Kavea Tweaks</title>
+    <link rel="icon" type="image/x-icon" href="kavea.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All CSS from the original file would go here */
+        /* For brevity, I'm including just the essential styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #a24ae2;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #a24ae2, #8a3ac8);
+            transition: width 0.3s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: #8a3ac8;
+            color: white;
+            text-align: center;
+            padding: 7.5px 0;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 101;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 14px;
+            will-change: transform;
+        }
+
+        .announcement-bar.hidden {
+            transform: translateY(-100%);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #000;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 22.5px;
+            width: 100%;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: #a24ae2;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #a24ae2;
+        }
+
+        /* Page Content */
+        .page-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 142.5px;
+        }
+
+        /* Support Hero Section */
+        .support-hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23111"/><path d="M0 0L100 100M100 0L0 100" stroke="%23333" stroke-width="1"/></svg>');
+        }
+
+        .support-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a24ae2, #a22b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .support-hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+
+        /* Support Options Section */
+        .support-options {
+            padding: 80px 0;
+            background-color: #000;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .option-card {
+            background-color: #000;
+            padding: 35px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .option-card:hover {
+            border-color: #a24ae2;
+        }
+
+        .option-icon {
+            font-size: 48px;
+            color: #a24ae2;
+            margin-bottom: 20px;
+        }
+
+        .option-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .option-desc {
+            color: #ccc;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #a24ae2;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #8a3ac8;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #a24ae2;
+            color: #a24ae2;
+        }
+
+        .btn-outline:hover {
+            background-color: #a24ae2;
+            color: #fff;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 80px 0;
+            background-color: #111;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #111;
+        }
+
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 20px;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* Contact Form */
+        .contact {
+            padding: 80px 0;
+            background-color: #000;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background-color: #111;
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #000;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #a24ae2;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #a24ae2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #8a3ac8;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px 0 20px;
+            border-top: 1px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #a24ae2;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #a24ae2;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin: 5px 10px;
+            }
+
+            .support-hero h1 {
+                font-size: 36px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <img src="kavea.png" alt="Kavea Tweaks Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width: 100%; height: 100%; background: linear-gradient(135deg, #a24ae2, #8a3ac8); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;\'>K</div>';">
+        </div>
+        <div class="loading-text">Loading Kavea Tweaks...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement">
+        Premium Tweaker almost Done :)
+    </div>
+
+    <!-- Header -->
+    <header id="navbar">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" href="index.html">
+                    <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
+                    Kavea <span>Tweaks</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html" class="active">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <!-- Support Hero Section -->
+        <section class="support-hero">
+            <div class="container">
+                <h1>Support Center</h1>
+                <p>Get help with Kavea Tweaks, troubleshoot issues, and find answers to common questions</p>
+            </div>
+        </section>
+
+        <!-- Support Options Section -->
+        <section class="support-options">
+            <div class="container">
+                <h2 class="section-title">How Can We Help You?</h2>
+                <div class="options-grid">
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Documentation</h3>
+                        <p class="option-desc">Browse our comprehensive documentation to learn how to use Kavea Tweaks effectively and troubleshoot common issues.</p>
+                        <a href="#" class="btn">View Documentation</a>
+                    </div>
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>FAQ</h3>
+                        <p class="option-desc">Find answers to frequently asked questions about installation, features, and troubleshooting.</p>
+                        <a href="#faq" class="btn">View FAQ</a>
+                    </div>
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <h3>Discord Community</h3>
+                        <p class="option-desc">Join our Discord community to get help from other users and our support team in real-time.</p>
+                        <a href="Discord.html" class="btn">Join Discord</a>
+                    </div>
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Contact Support</h3>
+                        <p class="option-desc">Can't find what you're looking for? Send us a message and our support team will help you.</p>
+                        <a href="#contact" class="btn">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="faq-container">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is Kavea Tweaks safe to use?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, Kavea Tweaks is completely safe to use. It only modifies Windows settings that are accessible to users and doesn't make any harmful changes to your system. All optimizations are reversible.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Will Kavea Tweaks improve my gaming performance?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, Kavea Tweaks is specifically designed to improve gaming performance by optimizing system resources, reducing background processes, and fine-tuning Windows settings for gaming. Premium versions offer even better FPS improvements and reduced input delay.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Do I need technical knowledge to use Kavea Tweaks?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            No, Kavea Tweaks is designed to be user-friendly. The interface is intuitive, and most optimizations can be applied with a single click. Advanced users can customize settings further if desired.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Can I revert the changes made by Kavea Tweaks?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, Kavea Tweaks includes a backup and restore feature that allows you to revert all changes made by the software. You can also create system restore points before applying optimizations for additional safety.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is Kavea Tweaks compatible with my antivirus software?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Kavea Tweaks is compatible with most antivirus software. However, some antivirus programs may flag optimization software as potentially unwanted programs (PUPs). If this happens, you can add Kavea Tweaks to your antivirus exclusion list.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How often should I run Kavea Tweaks?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            For most users, running Kavea Tweaks once after installation and then periodically (e.g., once a month) is sufficient. The software will notify you if any new optimizations are available that could benefit your system.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form -->
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="contact-container">
+                    <h2 class="section-title">Contact Support</h2>
+                    <div class="contact-form">
+                        <form id="supportForm">
+                            <div class="form-group">
+                                <label for="name">Your Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <select id="subject" name="subject" required>
+                                    <option value="">Select a topic</option>
+                                    <option value="installation">Installation Issue</option>
+                                    <option value="performance">Performance Issue</option>
+                                    <option value="billing">Billing/Premium</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" placeholder="Please describe your issue in detail..." required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Kavea Tweaks</h3>
+                    <p>Professional PC optimization software</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="Premium.html">Premium</a></li>
+                        <li><a href="Downloads.html">Downloads</a></li>
+                        <li><a href="Support.html">Support</a></li>
+                        <li><a href="Discord.html">Discord</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://discord.com/invite/FxenQbsuAM" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kavea Tweaks. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            
+            setTimeout(() => {
+                if (document.readyState !== 'complete') {
+                    loadingScreen.style.display = 'flex';
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 20;
+                        loadingProgress.style.width = `${progress}%`;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loadingScreen.classList.add('hidden');
+                            }, 300);
+                        }
+                    }, 200);
+                } else {
+                    loadingScreen.style.display = 'none';
+                }
+            }, 100);
+        });
+
+        // FAQ functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentNode;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Contact form submission
+        document.getElementById('supportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! Our support team will get back to you soon.');
+            this.reset();
+        });
+
+        // Scroll handling for header
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        const announcement = document.getElementById('announcement');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('hidden');
+                announcement.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+                announcement.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Right-click protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>
