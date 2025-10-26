@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="kavea.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* All your existing CSS remains the same */
         * {
             margin: 0;
             padding: 0;
@@ -14,13 +15,21 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #000;
             color: #fff;
             line-height: 1.6;
             overflow-x: hidden;
+            width: 100%;
+            overflow-x: hidden;
         }
 
+        /* ... rest of your CSS remains exactly the same ... */
+        
         /* Loading Screen */
         .loading-screen {
             position: fixed;
@@ -97,13 +106,13 @@
             top: 0;
             width: 100%;
             z-index: 101;
-            transition: all 0.4s ease;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             font-size: 14px;
+            will-change: transform;
         }
 
         .announcement-bar.hidden {
             transform: translateY(-100%);
-            opacity: 0;
         }
 
         /* Header Styles */
@@ -115,13 +124,12 @@
             top: 22.5px;
             width: 100%;
             z-index: 100;
-            transition: all 0.3s ease-in;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
         }
 
         header.hidden {
             transform: translateY(-100%);
-            opacity: 0;
-            transition: all 0.9s ease-out;
         }
 
         .header-content {
@@ -287,7 +295,7 @@
             padding: 30px;
             border-radius: 10px;
             border: 1px solid #333;
-            transition: transform 0.3s;
+            transition: transform 0.3s, border-color 0.3s;
         }
 
         .feature-card:hover {
@@ -365,7 +373,7 @@
             padding: 30px;
             border-radius: 10px;
             border: 1px solid #333;
-            transition: transform 0.3s;
+            transition: transform 0.3s, border-color 0.3s;
         }
 
         .team-member:hover {
@@ -820,7 +828,7 @@
             border-radius: 10px;
             padding: 40px;
             border: 1px solid #333;
-            transition: transform 0.3s;
+            transition: transform 0.3s, border-color 0.3s;
             margin-top: 40px;
         }
 
@@ -1069,17 +1077,17 @@
     <header id="navbar">
         <div class="container">
             <div class="header-content">
-                <a class="logo" onclick="showPage('home')">
+                <a class="logo" onclick="navigateTo('/')">
                     <img src="kavea.png" alt="Kavea Tweaks Logo" class="logo-img">
                     Kavea <span>Tweaks</span>
                 </a>
                 <nav>
                     <ul>
-                        <li><a href="#" onclick="showPage('home')">Home</a></li>
-                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
-                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
-                        <li><a href="#" onclick="showPage('support')">Support</a></li>
-                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                        <li><a href="/" onclick="navigateTo('/')">Home</a></li>
+                        <li><a href="/premium" onclick="navigateTo('/premium')">Premium</a></li>
+                        <li><a href="/downloads" onclick="navigateTo('/downloads')">Downloads</a></li>
+                        <li><a href="/support" onclick="navigateTo('/support')">Support</a></li>
+                        <li><a href="/discord" onclick="navigateTo('/discord')">Discord</a></li>
                     </ul>
                 </nav>
             </div>
@@ -1094,7 +1102,7 @@
                 <div class="container">
                     <h1>The Ultimate PC Optimization Solution</h1>
                     <p>Experience unparalleled performance and optimization with Kavea Tweaks. Completely free, regularly updated, and trusted by thousands of users worldwide.</p>
-                    <a href="#" onclick="showPage('downloads')" class="btn">Download Kavea Tweaks</a>
+                    <a href="/downloads" onclick="navigateTo('/downloads')" class="btn">Download Kavea Tweaks</a>
                 </div>
             </section>
 
@@ -1199,7 +1207,7 @@
                     <div class="premium-content">
                         <h2>Premium Features Available</h2>
                         <p>Take your PC optimization to the next level with our premium tweaks. Get better FPS, reduced input delay, and exclusive features not available in the free version.</p>
-                        <a href="#" onclick="showPage('premium')" class="btn">View Premium Plans</a>
+                        <a href="/premium" onclick="navigateTo('/premium')" class="btn">View Premium Plans</a>
 
                         <div class="premium-features">
                             <div class="premium-feature">
@@ -1311,7 +1319,7 @@
                                     </div>
                                 </li>
                             </ul>
-                            <a href="#" onclick="showPage('downloads')" class="btn">Download Free</a>
+                            <a href="/downloads" onclick="navigateTo('/downloads')" class="btn">Download Free</a>
                         </div>
 
                         <!-- Basic Tier (Middle) -->
@@ -1593,11 +1601,8 @@
                         <p>If you need further assistance, you can reach us through the following channels:</p>
 
                         <div style="margin-top: 30px;">
-                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn" style="margin-right: 15px;">
+                            <a href="https://discord.com/invite/FxenQbsuAM" target="_blank" class="btn">
                                 <i class="fab fa-discord"></i> Discord Server
-                            </a>
-                            <a href="mailto:support@kaveatweaks.com" class="btn btn-outline">
-                                <i class="fas fa-envelope"></i> Email Support
                             </a>
                         </div>
                     </div>
@@ -1779,11 +1784,11 @@
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="#" onclick="showPage('home')">Home</a></li>
-                        <li><a href="#" onclick="showPage('premium')">Premium</a></li>
-                        <li><a href="#" onclick="showPage('downloads')">Downloads</a></li>
-                        <li><a href="#" onclick="showPage('support')">Support</a></li>
-                        <li><a href="#" onclick="showPage('discord')">Discord</a></li>
+                        <li><a href="/" onclick="navigateTo('/')">Home</a></li>
+                        <li><a href="/premium" onclick="navigateTo('/premium')">Premium</a></li>
+                        <li><a href="/downloads" onclick="navigateTo('/downloads')">Downloads</a></li>
+                        <li><a href="/support" onclick="navigateTo('/support')">Support</a></li>
+                        <li><a href="/discord" onclick="navigateTo('/discord')">Discord</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -1802,8 +1807,65 @@
     </footer>
 
     <script>
-        // Loading screen functionality - only show on slow connections
+        // URL Routing System
+        const routes = {
+            '/': 'home',
+            '/premium': 'premium',
+            '/downloads': 'downloads',
+            '/support': 'support',
+            '/discord': 'discord'
+        };
+
+        function navigateTo(path) {
+            // Update browser history
+            window.history.pushState({}, '', path);
+            
+            // Show the appropriate page
+            showPageByPath(path);
+        }
+
+        function showPageByPath(path) {
+            const pageId = routes[path] || 'home';
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // Update document title
+            updateDocumentTitle(pageId);
+        }
+
+        function updateDocumentTitle(pageId) {
+            const baseTitle = 'Kavea Tweaks - PC Optimization Software';
+            const pageTitles = {
+                'home': baseTitle,
+                'premium': 'Premium - Kavea Tweaks',
+                'downloads': 'Downloads - Kavea Tweaks',
+                'support': 'Support - Kavea Tweaks',
+                'discord': 'Discord - Kavea Tweaks'
+            };
+            
+            document.title = pageTitles[pageId] || baseTitle;
+        }
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function() {
+            showPageByPath(window.location.pathname);
+        });
+
+        // Initial page load - check URL
         document.addEventListener('DOMContentLoaded', function() {
+            // Show page based on current URL
+            showPageByPath(window.location.pathname);
+            
+            // Loading screen functionality - only show on slow connections
             const loadingScreen = document.getElementById('loadingScreen');
             const loadingProgress = document.getElementById('loadingProgress');
             
@@ -1844,20 +1906,6 @@
             e.preventDefault();
             return false;
         });
-
-        // Page navigation
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-
-            // Scroll to top
-            window.scrollTo(0, 0);
-        }
 
         // Copy address functionality with enhanced animation
         document.getElementById('copy-ltc').addEventListener('click', function () {
@@ -1971,26 +2019,38 @@
             });
         });
 
-        // Header and announcement bar hide/show on scroll
+        // Optimized scroll handling for header and announcement bar
         let lastScrollTop = 0;
+        let ticking = false;
         const navbar = document.getElementById('navbar');
         const announcement = document.getElementById('announcement');
 
-        window.addEventListener('scroll', function () {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
+        function updateHeaderVisibility(scrollTop) {
+            // Only hide when scrolling down past a threshold
             if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Scrolling down - hide quickly (0.3s)
+                // Scrolling down - hide
                 navbar.classList.add('hidden');
                 announcement.classList.add('hidden');
             } else {
-                // Scrolling up - show slowly (0.9s - 50% slower)
+                // Scrolling up - show
                 navbar.classList.remove('hidden');
                 announcement.classList.remove('hidden');
             }
-
+            
             lastScrollTop = scrollTop;
-        });
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    updateHeaderVisibility(scrollTop);
+                });
+                ticking = true;
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
